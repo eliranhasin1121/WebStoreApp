@@ -16,7 +16,7 @@ namespace WebApp.Controllers
         private WebAppContext db = new WebAppContext();
 
         // GET: Users
-        public ActionResult Index()
+        public ActionResult Index ()
         {
             return View(db.Users.ToList());
         }

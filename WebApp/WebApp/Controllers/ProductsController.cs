@@ -94,7 +94,10 @@ namespace WebApp.Controllers
             ViewBag.SupplierId = new SelectList(db.Suppliers, "ID", "CompanyName", product.SupplierId);
             return View(product);
         }
-
+        public ActionResult ByProductType (string type)
+        {
+            return Content(type+" is the type of the prod");
+        }
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -129,5 +132,6 @@ namespace WebApp.Controllers
             }
             base.Dispose(disposing);
         }
+      
     }
 }
