@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using MySingleProject.Models;
 using WebApp.Models;
 
 namespace WebApp.Controllers
@@ -115,7 +114,17 @@ namespace WebApp.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        [Route("Users/login/{userName}/{password}")]
+        public ActionResult login(string userName,string password)
+        {
+            var user = from u in db.Users
+                       select u;
+            if(!String.IsNullOrEmpty(userName)&&!String.IsNullOrEmpty(password))
+            {
+                user = user.Where(u => (u.UserName.Equals(userName) && u.Password.Equals(password)));
+            }
+            return View(user.ToList());
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -298,6 +298,9 @@
     <Content Include="Views\Suppliers\Edit.cshtml" />
     <Content Include="Views\Suppliers\Index.cshtml" />
     <Content Include="Views\Products\getHotProducts.cshtml" />
+    <Content Include="Views\Products\ByProductType.cshtml" />
+    <Content Include="Views\Users\login.cshtml" />
+    <Content Include="Views\Products\addToCart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

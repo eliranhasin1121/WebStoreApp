@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using MySingleProject.Models;
 using WebApp.Models;
 
 namespace WebApp.Controllers
@@ -94,18 +93,16 @@ namespace WebApp.Controllers
             ViewBag.SupplierId = new SelectList(db.Suppliers, "ID", "CompanyName", product.SupplierId);
             return View(product);
         }
+        [Route("Products/type={type}")]
         public ActionResult ByProductType(string type)
         {
-            return Content(type + " is the type of the prod");
-        }
-        public ActionResult getHotProducts()
-        {
-            var hotproducts = db.Products.SqlQuery("select top 5 from products").ToList();
+            var productype = from p in db.Products
+                              select p;
+            if(!String.IsNullOrEmpty(type))
+                productype = productype.Where(p => p.ProductType.Equals(type));
 
 
-            return View(hotproducts);
-           
-          
+            return View(productype.ToList());
         }
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
@@ -132,7 +129,78 @@ namespace WebApp.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+        [Route("Products/getHotProducts")]
+        public ActionResult getHotProducts()
+        {
+            var hot = (from p in db.Products
+                       orderby p.Amount descending
+                       select p).Take(6);
 
+            return View(hot.ToList());
+          
+        }
+        //POST: Product/getHotProducts
+        [HttpPost,ActionName("getHotProducts")]
+        [ValidateAntiForgeryToken]
+        public ActionResult getHotProductsConfirmed()
+        {
+            var hot = (from p in db.Products
+                       orderby p.Amount descending
+                       select p).Take(6);
+            return RedirectToAction("Index");
+
+        }
+        [Route("products/addToCart/{product}/{user}")]
+        public ActionResult addToCart(string product, string user)
+
+        {
+            if(!String.IsNullOrEmpty(product)&&!String.IsNullOrEmpty(user))
+            {
+                bool flag = false;
+                var prod = (from p in db.Products
+                            where p.ProductName == product
+                            select p).SingleOrDefault<Product>();
+                var us = (from u in db.Users
+                          where u.UserName == user
+                          select u).SingleOrDefault<User>();
+                if (us != null)
+                {
+                    foreach(Product p in us.Cart)
+                    {
+                        if(p.ProductName==product)
+                        {
+                            p.Amount++;
+                            flag = true;
+                            db.SaveChanges();
+                        }
+                    }
+                    if (!flag)
+                    {
+                        us.Cart.Add(prod);
+                        db.SaveChanges();
+                    }
+                }
+
+                return View(us.Cart.ToList());
+                  
+            }
+           
+            return null;
+        }
+
+        public double getTotalPrice(User user)
+        {
+            double total = 0;
+            if (user != null)
+            {
+                foreach(Product p in user.Cart)
+                {
+                    total += (p.Amount * p.cost);
+                }
+                return total;
+            }
+            return 0;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
