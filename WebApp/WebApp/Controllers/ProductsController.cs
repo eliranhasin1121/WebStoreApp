@@ -98,9 +98,14 @@ namespace WebApp.Controllers
         {
             return Content(type + " is the type of the prod");
         }
-        public ICollection<Product> GetHotProducts()
+        public ActionResult getHotProducts()
         {
-            
+            var hotproducts = db.Products.SqlQuery("select top 5 from products").ToList();
+
+
+            return View(hotproducts);
+           
+          
         }
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
