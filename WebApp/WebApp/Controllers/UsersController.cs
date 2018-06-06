@@ -125,6 +125,14 @@ namespace WebApp.Controllers
             }
             return View(user.ToList());
         }
+
+        public User getUserFromDB(string userName)
+        {
+            var user = (from u in db.Users
+                        where u.UserName == userName
+                        select u).SingleOrDefault<User>();
+            return user;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

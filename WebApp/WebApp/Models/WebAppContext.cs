@@ -24,5 +24,9 @@ namespace WebApp.Models
         public System.Data.Entity.DbSet<WebApp.Models.Product> Products { get; set; }
 
         public System.Data.Entity.DbSet<WebApp.Models.Supplier> Suppliers { get; set; }
+
+        public System.Data.Entity.DbSet<WebApp.Models.StorageProducts> StorageProducts { get; set; }
+
+        public System.Data.Entity.DbSet<WebApp.Models.OrderDetails> OrderDetails { get; set; }
     }
 }

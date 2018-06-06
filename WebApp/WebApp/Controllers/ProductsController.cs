@@ -13,7 +13,8 @@ namespace WebApp.Controllers
     public class ProductsController : Controller
     {
         private WebAppContext db = new WebAppContext();
-
+        //private User usersController = new User();
+        static int orderId = 1;
         // GET: Products
         public ActionResult Index()
         {
@@ -53,6 +54,8 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 db.Products.Add(product);
+                StorageProducts storage = new StorageProducts(product.ID,product.ProductName,product.Supplier);
+                db.StorageProducts.Add(storage);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -93,17 +96,6 @@ namespace WebApp.Controllers
             ViewBag.SupplierId = new SelectList(db.Suppliers, "ID", "CompanyName", product.SupplierId);
             return View(product);
         }
-        [Route("Products/type={type}")]
-        public ActionResult ByProductType(string type)
-        {
-            var productype = from p in db.Products
-                              select p;
-            if(!String.IsNullOrEmpty(type))
-                productype = productype.Where(p => p.ProductType.Equals(type));
-
-
-            return View(productype.ToList());
-        }
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -139,6 +131,17 @@ namespace WebApp.Controllers
             return View(hot.ToList());
           
         }
+        [Route("Products/type={type}")]
+        public ActionResult ByProductType(string type)
+        {
+            var productype = from p in db.Products
+                              select p;
+            if(!String.IsNullOrEmpty(type))
+                productype = productype.Where(p => p.ProductType.Equals(type));
+
+
+            return View(productype.ToList());
+        }
         //POST: Product/getHotProducts
         [HttpPost,ActionName("getHotProducts")]
         [ValidateAntiForgeryToken]
@@ -150,24 +153,27 @@ namespace WebApp.Controllers
             return RedirectToAction("Index");
 
         }
-        [Route("products/addToCart/{product}/{user}")]
-        public ActionResult addToCart(string product, string user)
+        [Route("products/addToCart/{productID}/{user}")]
+        public ActionResult addToCart(int productID, string user)
 
         {
-            if(!String.IsNullOrEmpty(product)&&!String.IsNullOrEmpty(user))
+            if(productID>0&&!String.IsNullOrEmpty(user))
             {
                 bool flag = false;
-                var prod = (from p in db.Products
-                            where p.ProductName == product
-                            select p).SingleOrDefault<Product>();
-                var us = (from u in db.Users
-                          where u.UserName == user
-                          select u).SingleOrDefault<User>();
+                Product product = this.getProductFromDB(productID);
+                StorageProducts storage = (from s in db.StorageProducts
+                                           where s.productName == product.ProductName
+                                           select s).SingleOrDefault<StorageProducts>();
+                storage.amount--;
+
+                User us =  (from u in db.Users
+                                      where u.UserName == user
+                                      select u).SingleOrDefault<User>();//user.getUserFromDB(user);
                 if (us != null)
                 {
                     foreach(Product p in us.Cart)
                     {
-                        if(p.ProductName==product)
+                        if(p.ID==productID)
                         {
                             p.Amount++;
                             flag = true;
@@ -176,7 +182,7 @@ namespace WebApp.Controllers
                     }
                     if (!flag)
                     {
-                        us.Cart.Add(prod);
+                        us.Cart.Add(product);
                         db.SaveChanges();
                     }
                 }
@@ -201,6 +207,42 @@ namespace WebApp.Controllers
             }
             return 0;
         }
+        [Route("products/sendOrder/{userName}")]
+        public ActionResult sendOrder(string userName) {
+         
+            if (!String.IsNullOrEmpty(userName))
+            {
+                User user = (from u in db.Users
+                                        where u.UserName == userName
+                                        select u).SingleOrDefault<User>();
+
+                    OrderDetails ord = new OrderDetails();
+                ord.Cart = user.Cart;
+                ord.OrderID = orderId++;
+                ord.userName = user.UserName;
+                ord.orderTime=DateTime.Now;
+                    ord.total = this.getTotalPrice(user);
+                    db.OrderDetails.Add(ord);
+
+                    foreach(Product p in user.Cart.ToList())
+                    {
+                        user.Cart.Remove(p);
+                    }
+                 db.SaveChanges();
+
+                return View();
+                
+            }
+             return HttpNotFound();
+
+        }
+        public Product getProductFromDB(int productID)
+        {
+           return (from p in db.Products
+             where p.ID == productID
+             select p).SingleOrDefault<Product>();
+        } 
+       
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebApp.Models
 {
-    [Table("Products")]
+   
     public class Product
     {
 

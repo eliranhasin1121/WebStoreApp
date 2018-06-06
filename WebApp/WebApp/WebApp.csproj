@@ -226,17 +226,21 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderDetailsController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\StorageProductsController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201806011853178_Initial.cs" />
-    <Compile Include="Migrations\201806011853178_Initial.Designer.cs">
-      <DependentUpon>201806011853178_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201806041616297_initial.cs" />
+    <Compile Include="Migrations\201806041616297_initial.Designer.cs">
+      <DependentUpon>201806041616297_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\OrderDetails.cs" />
+    <Compile Include="Models\StorageProducts.cs" />
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\User.cs" />
@@ -301,6 +305,17 @@
     <Content Include="Views\Products\ByProductType.cshtml" />
     <Content Include="Views\Users\login.cshtml" />
     <Content Include="Views\Products\addToCart.cshtml" />
+    <Content Include="Views\StorageProducts\Create.cshtml" />
+    <Content Include="Views\StorageProducts\Delete.cshtml" />
+    <Content Include="Views\StorageProducts\Details.cshtml" />
+    <Content Include="Views\StorageProducts\Edit.cshtml" />
+    <Content Include="Views\StorageProducts\Index.cshtml" />
+    <Content Include="Views\OrderDetails\Create.cshtml" />
+    <Content Include="Views\OrderDetails\Delete.cshtml" />
+    <Content Include="Views\OrderDetails\Details.cshtml" />
+    <Content Include="Views\OrderDetails\Edit.cshtml" />
+    <Content Include="Views\OrderDetails\Index.cshtml" />
+    <Content Include="Views\Products\sendOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -319,8 +334,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201806011853178_Initial.resx">
-      <DependentUpon>201806011853178_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806041616297_initial.resx">
+      <DependentUpon>201806041616297_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
